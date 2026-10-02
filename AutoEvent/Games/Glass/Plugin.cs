@@ -102,8 +102,8 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
             catch (Exception e)
             {
                 data = new PlatformData(Random.Range(0, 2) == 1, -1);
-                DebugLogger.LogDebug("An error has occured while processing platform data.", LogLevel.Warn, true);
-                DebugLogger.LogDebug($"selector count: {selector.PlatformCount}, selector length: {selector.PlatformData.Count}, specified count: {platformCount}, [i: {i}]");
+                DebugLogger.LogDebug("Ошибка обработки данных платформы.", LogLevel.Warn, true);
+                DebugLogger.LogDebug($"Платформ у селектора: {selector.PlatformCount}, записей: {selector.PlatformData.Count}, задано: {platformCount}, индекс: {i}");
                 DebugLogger.LogDebug($"{e}");
             }
             

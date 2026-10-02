@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using HarmonyLib;
 using AutoEvent.API;
 using Exiled.API.Features;
@@ -8,22 +9,30 @@ namespace AutoEvent;
 public class AutoEvent : Plugin<Config>
 {
     public override string Name => "AutoEvent";
-    public override string Author => "Created by a large community of programmers, map builders and just ordinary people, under the leadership of RisottoMan. MapEditorReborn for 14.1 port by Sakred_";
-    public override Version Version => Version.Parse("9.11.2");
-    public override Version RequiredExiledVersion => new(9, 6, 0);
+    public override string Author => "Narin (ex. RisottoMan)";
+    public override Version Version => Version.Parse("9.11.6");
+    public override Version RequiredExiledVersion => new(9, 14, 2);
     public static string BaseConfigPath { get; set;}
     public static AutoEvent Singleton;
     public static Harmony HarmonyPatch;
     public static EventManager EventManager;
     private EventHandler _eventHandler;
+    internal AutoVotingSystem VotingSystem { get; private set; }
     
     public override void OnEnabled()
     {
         if (!Config.IsEnabled) return;
 
+        if (!AppDomain.CurrentDomain.GetAssemblies().Any(x => x.GetName().Name == "ProjectMER"))
+        {
+            Log.Error("Для AutoEvent нужен ProjectMER 2026.7.6.1 в LabAPI/plugins/global. Установите и загрузите ProjectMER перед включением AutoEvent.");
+            return;
+        }
+
         CosturaUtility.Initialize();
         
         BaseConfigPath = Path.Combine(Paths.Configs, "AutoEvent");
+        if (!ConfigureSchematicsDirectory()) return;
         
         try
         {
@@ -31,7 +40,7 @@ public class AutoEvent : Plugin<Config>
             
             if (Config.IgnoredRoles.Contains(Config.LobbyRole))
             {
-                DebugLogger.LogDebug("The Lobby Role is also in ignored roles. This will break the game if not changed. The plugin will remove the lobby role from ignored roles.", LogLevel.Error, true);
+                DebugLogger.LogDebug("Роль лобби указана среди игнорируемых ролей. Она удалена из списка, иначе мини-игры не будут работать.", LogLevel.Error, true);
                 Config.IgnoredRoles.Remove(Config.LobbyRole);
             }
 
@@ -41,7 +50,7 @@ public class AutoEvent : Plugin<Config>
             DebugLogger.Debug = Config.Debug;
             if (DebugLogger.Debug)
             {
-                DebugLogger.LogDebug($"Debug Mode Enabled", LogLevel.Info, true);
+                DebugLogger.LogDebug("Режим отладки включён.", LogLevel.Info, true);
             }
             
             try
@@ -51,28 +60,22 @@ public class AutoEvent : Plugin<Config>
             }
             catch (Exception e)
             {
-                DebugLogger.LogDebug("Could not patch harmony methods.", LogLevel.Warn, true);
+                DebugLogger.LogDebug("Не удалось применить патчи Harmony.", LogLevel.Warn, true);
                 DebugLogger.LogDebug($"{e}");
             }
 
             try
             {
-                DebugLogger.LogDebug($"Base Conf Path: {BaseConfigPath}");
-                DebugLogger.LogDebug($"Configs paths: \n" +
+                DebugLogger.LogDebug($"Путь конфигурации: {BaseConfigPath}");
+                DebugLogger.LogDebug($"Пути ресурсов: \n" +
                                      $"{Config.SchematicsDirectoryPath}\n" +
                                      $"{Config.MusicDirectoryPath}\n");
                 CreateDirectoryIfNotExists(BaseConfigPath);
-                CreateDirectoryIfNotExists(Config.SchematicsDirectoryPath);
                 CreateDirectoryIfNotExists(Config.MusicDirectoryPath);
-                
-                // temporarily
-                DeleteDirectoryAndFiles(Path.Combine(BaseConfigPath, "Configs"));
-                DeleteDirectoryAndFiles(Path.Combine(BaseConfigPath, "Events"));
-                DeleteDirectoryAndFiles(Path.Combine(Path.Combine(BaseConfigPath, "Schematics"), "All Source maps"));
             }
             catch (Exception e)
             {
-                DebugLogger.LogDebug($"An error has occured while trying to initialize directories.", LogLevel.Warn, true);
+                DebugLogger.LogDebug("Ошибка инициализации каталогов.", LogLevel.Warn, true);
                 DebugLogger.LogDebug($"{e}");
             }
 
@@ -80,12 +83,13 @@ public class AutoEvent : Plugin<Config>
             EventManager = new EventManager();
             EventManager.RegisterInternalEvents();
             ConfigManager.LoadConfigsAndTranslations();
+            VotingSystem = new AutoVotingSystem(this);
             
-            DebugLogger.LogDebug($"The mini-games are loaded.", LogLevel.Info, true);
+            DebugLogger.LogDebug("Мини-игры загружены.", LogLevel.Info, true);
         }
         catch (Exception e)
         {
-            DebugLogger.LogDebug("Caught an exception while starting plugin.", LogLevel.Warn, true);
+            DebugLogger.LogDebug("Ошибка запуска плагина.", LogLevel.Warn, true);
             DebugLogger.LogDebug($"{e}");
         }
         
@@ -103,32 +107,35 @@ public class AutoEvent : Plugin<Config>
         }
         catch (Exception e)
         {
-            DebugLogger.LogDebug("An error has occured while trying to create a new directory.", LogLevel.Warn, true);
-            DebugLogger.LogDebug($"Path: {path}\n{e}");
+            DebugLogger.LogDebug("Не удалось создать каталог.", LogLevel.Warn, true);
+            DebugLogger.LogDebug($"Путь: {path}\n{e}");
         }
     }
-    
-    private static void DeleteDirectoryAndFiles(string path)
+
+    private bool ConfigureSchematicsDirectory()
     {
-        try
+        var merDirectory = ProjectMER.ProjectMER.SchematicsDir;
+        if (string.IsNullOrWhiteSpace(merDirectory))
         {
-            if (Directory.Exists(path))
-            {
-                Directory.Delete(path, true);
-            }
+            Log.Error("ProjectMER найден, но каталог схем не инициализирован. Проверьте журнал загрузки LabAPI.");
+            return false;
         }
-        catch (Exception e)
-        {
-            DebugLogger.LogDebug("An error has occured while trying to delete a directory.", LogLevel.Warn, true);
-            DebugLogger.LogDebug($"Path: {path}\n{e}");
-        }
+
+        if (!string.Equals(Config.SchematicsDirectoryPath, merDirectory, StringComparison.OrdinalIgnoreCase))
+            Log.Warn($"AutoEvent использует каталог схем ProjectMER: {merDirectory}. Параметр schematics_directory_path игнорируется.");
+
+        Config.SchematicsDirectoryPath = merDirectory;
+        return true;
     }
     
     public override void OnDisabled()
     {
+        VotingSystem?.Dispose();
+        VotingSystem = null;
+        _eventHandler?.UnregisterEvents();
         _eventHandler = null;
 
-        HarmonyPatch.UnpatchAll();
+        HarmonyPatch?.UnpatchAll();
         EventManager = null;
         Singleton = null;
         

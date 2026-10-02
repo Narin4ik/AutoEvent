@@ -44,7 +44,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="ExMod.Exiled" Version="9.6.0" />
+    <PackageReference Include="ExMod.Exiled" Version="9.14.2" />
     <PackageReference Include="Fody" Version="6.8.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -54,11 +54,8 @@
     <PackageReference Include="NVorbis" Version="0.10.5" />
   </ItemGroup>
 <ItemGroup>
-    <Reference Include="CedModV3" HintPath="$(SL_REFERENCES)\CedModV3.dll" />
-    <Reference Include="ProjectMER" HintPath="$(SL_REFERENCES)\ProjectMER.dll" />
-    <Reference Include="AdvancedMERTools" HintPath="$(SL_REFERENCES)\AdvancedMERTools.dll" />
-    <Reference Include="AudioPlayerApi" HintPath="$(SL_REFERENCES)\AudioPlayerApi.dll" />
-    <Reference Include="Assembly-CSharp-Publicized" HintPath="$(SL_REFERENCES)\Assembly-CSharp-Halloween-Publicized.dll" />
+    <Reference Include="ProjectMER" HintPath="..\dependencies\ProjectMER.dll" />
+    <Reference Include="AudioPlayerApi" HintPath="..\dependencies\AudioPlayerApi-1.1.2\dependencies\AudioPlayerApi.dll" />
     <Reference Include="Mirror" HintPath="$(SL_REFERENCES)\Mirror.dll" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" HintPath="$(SL_REFERENCES)\System.ComponentModel.DataAnnotations.dll" />

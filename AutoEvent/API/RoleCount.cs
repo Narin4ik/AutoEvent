@@ -41,13 +41,13 @@ public class RoleCount
                 List<Player> playersToPullFrom = (availablePlayers ?? Player.List) .Where(x => !validPlayers.Contains(x)).ToList();
                 if (playersToPullFrom.Count < 1)
                 {
-                    DebugLogger.LogDebug("Cannot pull more players.");
+                    DebugLogger.LogDebug("Больше игроков выбрать нельзя.");
                     break;
                 }
 
                 if (playersToPullFrom.Count < 2)
                 {
-                    DebugLogger.LogDebug("Only one more player available. Pulling that player.");
+                    DebugLogger.LogDebug("Остался один доступный игрок; он выбран.");
                     validPlayers.Add(playersToPullFrom[0]);
                     break;
                 }
@@ -59,7 +59,7 @@ public class RoleCount
         }
         catch (Exception e)
         {
-            DebugLogger.LogDebug("Could not assign player to list.", LogLevel.Warn);
+            DebugLogger.LogDebug("Не удалось добавить игрока в список.", LogLevel.Warn);
             DebugLogger.LogDebug($"{e}");
         }
         if(alwaysLeaveOnePlayer && validPlayers.Count >= (availablePlayers ?? Player.List).Count)

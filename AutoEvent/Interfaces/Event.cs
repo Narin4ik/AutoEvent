@@ -114,7 +114,7 @@ namespace AutoEvent.Interfaces
     /// <param name="checkIfAutomatic">Should the audio abide by <see cref="SoundInfo.StartAutomatically"/></param>
     protected void StartAudio(bool checkIfAutomatic = false)
     {
-        DebugLogger.LogDebug($"Starting Audio: " +
+        DebugLogger.LogDebug($"Запуск аудио: " +
                                  $"{(this is IEventSound s ? "true, " + 
                                  $"{(!string.IsNullOrEmpty(s.SoundInfo.SoundName)? "true" : "false")}, " +
                                  $"{(!checkIfAutomatic ? "true" : "false")}, " +
@@ -130,7 +130,7 @@ namespace AutoEvent.Interfaces
     /// </summary>
     protected void StopAudio()
     {
-        DebugLogger.LogDebug("Stopping Audio");
+        DebugLogger.LogDebug("Остановка аудио");
         if (this is IEventSound sound && !string.IsNullOrEmpty(sound.SoundInfo.SoundName))
         {
             Extensions.StopAudio(sound.SoundInfo.AudioPlayer);
@@ -144,7 +144,7 @@ namespace AutoEvent.Interfaces
 
     protected void SpawnMap(bool checkIfAutomatic = false)
     {
-        DebugLogger.LogDebug($"Spawning Map: " +
+        DebugLogger.LogDebug($"Создание карты: " +
                              $"{(this is IEventMap m ? "true, " + 
                              $"{(!string.IsNullOrEmpty(m.MapInfo.MapName)? "true" : "false")}, " +
                              $"{(!checkIfAutomatic ? "true" : "false")}, " +
@@ -160,7 +160,7 @@ namespace AutoEvent.Interfaces
     /// </summary>
     protected void DeSpawnMap()
     {
-        DebugLogger.LogDebug($"DeSpawning Map. {this is IEventMap}", LogLevel.Debug);
+        DebugLogger.LogDebug($"Удаление карты. {this is IEventMap}", LogLevel.Debug);
         if (this is IEventMap eventMap)
         {
             Extensions.UnLoadMap(eventMap.MapInfo.Map);
@@ -172,7 +172,7 @@ namespace AutoEvent.Interfaces
     /// </summary>
     public void StartEvent()
     {
-        DebugLogger.LogDebug($"Starting Event {Name}", LogLevel.Debug);
+        DebugLogger.LogDebug($"Запуск ивента {Name}", LogLevel.Debug);
         OnInternalStart();
     }
     
@@ -181,7 +181,7 @@ namespace AutoEvent.Interfaces
     /// </summary>
     public void StopEvent()
     {
-        DebugLogger.LogDebug($"Stopping Event {Name}", LogLevel.Debug);
+        DebugLogger.LogDebug($"Остановка ивента {Name}", LogLevel.Debug);
         OnInternalStop();
     }
 
@@ -302,7 +302,7 @@ namespace AutoEvent.Interfaces
                 eventMap.MapInfo.SpawnAutomatically = spawnAutomatically;
 
                 Message:
-                DebugLogger.LogDebug($"[{this.Name}] Map {eventMap.MapInfo.MapName} selected.", LogLevel.Debug);
+                DebugLogger.LogDebug($"[{this.Name}] Выбрана карта {eventMap.MapInfo.MapName}.", LogLevel.Debug);
             }
         
         }
@@ -330,7 +330,7 @@ namespace AutoEvent.Interfaces
             catch (Exception e)
             {
 
-                DebugLogger.LogDebug($"Caught an exception at Event.OnStop().", LogLevel.Warn, true);
+                DebugLogger.LogDebug("Ошибка в Event.OnStop().", LogLevel.Warn, true);
                 DebugLogger.LogDebug($"{e}", LogLevel.Debug);
             }
             EventStopped?.Invoke(Name);
@@ -372,7 +372,7 @@ namespace AutoEvent.Interfaces
             }
             catch (Exception e)
             {
-                DebugLogger.LogDebug($"Could not modify friendly fire / ff autoban settings.", LogLevel.Error, true);
+                DebugLogger.LogDebug("Не удалось изменить настройки урона по союзникам и автоматической блокировки.", LogLevel.Error, true);
                 DebugLogger.LogDebug($"{e}");
             }
             
@@ -386,7 +386,7 @@ namespace AutoEvent.Interfaces
             catch (Exception e)
             {
             
-                DebugLogger.LogDebug($"Caught an exception at Event.RegisterEvents().", LogLevel.Warn, true);
+                DebugLogger.LogDebug("Ошибка в Event.RegisterEvents().", LogLevel.Warn, true);
                 DebugLogger.LogDebug($"{e}", LogLevel.Debug);
 
             }
@@ -398,7 +398,7 @@ namespace AutoEvent.Interfaces
             catch (Exception e)
             {
                 
-                DebugLogger.LogDebug($"Caught an exception at Event.OnStart().", LogLevel.Warn, true);
+                DebugLogger.LogDebug("Ошибка в Event.OnStart().", LogLevel.Warn, true);
                 DebugLogger.LogDebug($"{e}", LogLevel.Debug);
             }
             
@@ -425,7 +425,7 @@ namespace AutoEvent.Interfaces
             }
             catch (Exception e)
             {
-                DebugLogger.LogDebug($"Caught an exception at Event.CountdownFinished().", LogLevel.Warn, true);
+                DebugLogger.LogDebug("Ошибка в Event.CountdownFinished().", LogLevel.Warn, true);
                 DebugLogger.LogDebug($"{e}", LogLevel.Debug);
             }
             GameCoroutine = Timing.RunCoroutine(RunGameCoroutine(), "Event Coroutine");
@@ -440,7 +440,7 @@ namespace AutoEvent.Interfaces
             }
             catch (Exception e)
             {
-                DebugLogger.LogDebug($"Caught an exception at Event.OnFinished().", LogLevel.Warn, true);
+                DebugLogger.LogDebug("Ошибка в Event.OnFinished().", LogLevel.Warn, true);
                 DebugLogger.LogDebug($"{e}", LogLevel.Debug);
             }
             var handle = Timing.CallDelayed(PostRoundDelay, () =>
@@ -471,7 +471,7 @@ namespace AutoEvent.Interfaces
                 }
                 catch (Exception e)
                 {
-                    DebugLogger.LogDebug($"Caught an exception at Event.ProcessFrame().", LogLevel.Warn, true);
+                    DebugLogger.LogDebug("Ошибка в Event.ProcessFrame().", LogLevel.Warn, true);
                     DebugLogger.LogDebug($"{e}", LogLevel.Error, true);
                 }
 
@@ -498,7 +498,7 @@ namespace AutoEvent.Interfaces
             }
             catch (Exception e)
             {
-                DebugLogger.LogDebug($"Caught an exception at Event.OnUnregisterEvents().", LogLevel.Warn, true);
+                DebugLogger.LogDebug("Ошибка в Event.OnUnregisterEvents().", LogLevel.Warn, true);
                 DebugLogger.LogDebug($"{e}", LogLevel.Debug);
             }
 
@@ -508,7 +508,7 @@ namespace AutoEvent.Interfaces
             }
             catch (Exception e)
             {
-                DebugLogger.LogDebug($"Friendly Fire was not able to be restored. Please ensure it is disabled. PLAYERS MAY BE AUTO-BANNED ACCIDENTALLY OR MAY NOT BE BANNED FOR FF.", LogLevel.Error, true);
+                DebugLogger.LogDebug("Не удалось восстановить настройки урона по союзникам. Проверьте их вручную: возможны ошибочные блокировки игроков.", LogLevel.Error, true);
                 DebugLogger.LogDebug($"{e}");
             }
 
@@ -522,7 +522,7 @@ namespace AutoEvent.Interfaces
             }
             catch (Exception e)
             {
-                DebugLogger.LogDebug("Caught an exception at Event.OnInternalCleanup().GeneralCleanup().", LogLevel.Warn, true);
+                DebugLogger.LogDebug("Ошибка при общей очистке ивента.", LogLevel.Warn, true);
                 DebugLogger.LogDebug($"{e}", LogLevel.Debug);
             }
 
@@ -532,7 +532,7 @@ namespace AutoEvent.Interfaces
             }
             catch (Exception e)
             {
-                DebugLogger.LogDebug($"Caught an exception at Event.OnCleanup().", LogLevel.Warn, true);
+                DebugLogger.LogDebug("Ошибка в Event.OnCleanup().", LogLevel.Warn, true);
                 DebugLogger.LogDebug($"{e}", LogLevel.Debug);
             }
 
@@ -542,7 +542,7 @@ namespace AutoEvent.Interfaces
             }
             catch (Exception e)
             {
-                DebugLogger.LogDebug($"Caught an exception at Event.CleanupFinished.Invoke().", LogLevel.Warn, true);
+                DebugLogger.LogDebug("Ошибка уведомления о завершении очистки ивента.", LogLevel.Warn, true);
                 DebugLogger.LogDebug($"{e}", LogLevel.Debug);
             }
             

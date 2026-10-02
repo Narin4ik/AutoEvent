@@ -42,12 +42,14 @@ internal class Run : ICommand, IUsageProvider
         // Checking that MapEditorReborn has loaded on the server
         if (!(ev is IEventMap map && !string.IsNullOrEmpty(map.MapInfo.MapName) && map.MapInfo.MapName.ToLower() != "none"))
         {
-            Log.Warn("No map has been specified for this event!");
+            Log.Warn("Для этого ивента не указана карта.");
         }
         else if (!Extensions.IsExistsMap(map.MapInfo.MapName, out response))
         {
             return false;
         }
+
+        AutoEvent.Singleton.VotingSystem?.CancelForManualEvent();
         
         Round.IsLocked = true;
 

@@ -9,7 +9,7 @@ public class Config : Exiled.API.Interfaces.IConfig
     public Config()
     {
         string basePath = Path.Combine(Exiled.API.Features.Paths.Configs, "AutoEvent");
-        SchematicsDirectoryPath = Path.Combine(basePath, "Schematics");
+        SchematicsDirectoryPath = Path.Combine(LabApi.Loader.Features.Paths.PathManager.Configs.FullName, "ProjectMER", "Schematics");
         MusicDirectoryPath = Path.Combine(basePath, "Music");
     }
 
@@ -36,9 +36,63 @@ public class Config : Exiled.API.Interfaces.IConfig
     [Description("The players will be set once an event is done. **DO NOT USE A ROLE THAT IS ALSO IN IgnoredRoles**")]
     public RoleTypeId LobbyRole { get; set; } = RoleTypeId.ClassD;
     
-    [Description("Where the schematics directory is located. By default it is located in the AutoEvent folder.")]
+    [Description("ProjectMER schematic directory. ProjectMER controls this path; AutoEvent uses its active directory.")]
     public string SchematicsDirectoryPath { get; set; }
     
     [Description("Where the music directory is located. By default it is located in the AutoEvent folder.")]
     public string MusicDirectoryPath { get; set; }
+
+    [Description("Настройки автоматического голосования за мини-игры.")]
+    public AutoVotingConfig AutoVoting { get; set; } = new();
+}
+
+public class AutoVotingConfig
+{
+    [Description("Включить автоматические ивенты после загрузки плагина.")]
+    public bool Enabled { get; set; } = true;
+
+    [Description("Голосовать перед каждым N-м раундом (4, 8, 12 при значении 4).")]
+    public int RoundInterval { get; set; } = 4;
+
+    [Description("Продолжительность голосования в секундах.")]
+    public int VoteDurationSeconds { get; set; } = 45;
+
+    [Description("Период обновления сообщения о голосовании в секундах.")]
+    public float BroadcastIntervalSeconds { get; set; } = 1f;
+
+    [Description("Продолжительность каждого сообщения о голосовании в секундах.")]
+    public float BroadcastDurationSeconds { get; set; } = 1.5f;
+
+    [Description("Текст сообщения. Параметры: {time}, {yes}, {no}.")]
+    public string VoteBroadcastText { get; set; } = "<size=28><color=yellow>Авто-ивенты: голосуйте Да или Нет!</color>\nДа: {yes} | Нет: {no} | Осталось: {time} с\nНажмите кнопку в Server Specific Settings.</size>";
+
+    [Description("Сообщение после успешного голосования.")]
+    public string VotePassedText { get; set; } = "Голосование завершено: авто-ивенты начнутся в этом раунде.";
+
+    [Description("Сообщение после отклонённого голосования.")]
+    public string VoteFailedText { get; set; } = "Голосование завершено: обычный раунд.";
+
+    [Description("Название группы в Server Specific Settings.")]
+    public string SettingsGroupName { get; set; } = "Авто-ивенты";
+
+    [Description("Подпись строки голосования «Да».")]
+    public string YesLabel { get; set; } = "Проголосовать \"Да\" за проведение ивентов";
+
+    [Description("Подсказка для кнопки согласия.")]
+    public string YesHint { get; set; } = "Голосовать за два ивента подряд";
+
+    [Description("Текст кнопки голосования «Да».")]
+    public string YesButtonText { get; set; } = "Да";
+
+    [Description("Подпись строки голосования «Нет».")]
+    public string NoLabel { get; set; } = "Проголосовать \"Нет\" против проведения ивентов";
+
+    [Description("Подсказка для кнопки отказа.")]
+    public string NoHint { get; set; } = "Голосовать за обычный раунд";
+
+    [Description("Текст кнопки голосования «Нет».")]
+    public string NoButtonText { get; set; } = "Нет";
+
+    [Description("Дополнительные исключения из случайного выбора (имена команд ивентов). jail, escape, lobby и vote исключены всегда.")]
+    public List<string> ExcludedEvents { get; set; } = new();
 }

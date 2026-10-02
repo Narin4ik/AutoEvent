@@ -116,7 +116,7 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
                 yield break;
             }
 
-            DebugLogger.LogDebug($"Stage: {Stage}/{Config.Rounds}. Radius: {radius}, Scale: {scale}, Count: {count}, Timing: {timing}, Height: {height}, Fuse: {fuse}, Target: {Config.TargetPlayers}");
+            DebugLogger.LogDebug($"Этап: {Stage}/{Config.Rounds}. Радиус: {radius}, масштаб: {scale}, количество: {count}, время: {timing}, высота: {height}, взрыватель: {fuse}, цели: {Config.TargetPlayers}");
             
             // Not the last round.
             if (Stage != Config.Rounds)
@@ -137,7 +137,7 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
                         }
                         catch (Exception e)
                         {
-                            DebugLogger.LogDebug("Caught an error while targeting a player.", LogLevel.Warn, true);
+                            DebugLogger.LogDebug("Ошибка при выборе игрока целью.", LogLevel.Warn, true);
                             DebugLogger.LogDebug($"{e}");
                         }
                     }
@@ -164,7 +164,7 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
             radius += 7f;    //4,   11,  18,  25   [ignored last round] 10
         }
 
-        DebugLogger.LogDebug("Finished Grenade Coroutine.");
+        DebugLogger.LogDebug("Корутина гранат завершена.");
         yield break;
     }
 

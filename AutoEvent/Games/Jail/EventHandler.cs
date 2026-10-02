@@ -81,7 +81,7 @@ public class EventHandler
         }
         catch (Exception e)
         {
-            DebugLogger.LogDebug($"An error has occured while processing locker events.", LogLevel.Warn, true);
+            DebugLogger.LogDebug("Ошибка обработки шкафчика.", LogLevel.Warn, true);
             DebugLogger.LogDebug($"{e}");
         }
     }

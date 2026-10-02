@@ -21,10 +21,11 @@ public class MainCommand : ParentCommand
             RegisterCommand(new Stop());
             RegisterCommand(new Volume());
             RegisterCommand(new Translations());
+            RegisterCommand(new Auto());
         }
         catch (Exception e)
         {
-            DebugLogger.LogDebug($"Caught an exception while registering commands.", LogLevel.Warn, true);
+            DebugLogger.LogDebug("Ошибка регистрации команд.", LogLevel.Warn, true);
             DebugLogger.LogDebug($"{e}");
         }
     }

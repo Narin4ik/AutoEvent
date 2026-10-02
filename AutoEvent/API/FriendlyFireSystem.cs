@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Linq;
-using CedMod;
+using System.Reflection;
 using Exiled.API.Features;
 
 namespace AutoEvent.API;
 public class FriendlyFireSystem
 {
+    private static readonly PropertyInfo CedModAdminDisabled = AppDomain.CurrentDomain.GetAssemblies()
+        .FirstOrDefault(x => x.GetName().Name?.StartsWith("CedMod", StringComparison.OrdinalIgnoreCase) == true)
+        ?.GetType("CedMod.FriendlyFireAutoban")
+        ?.GetProperty("AdminDisabled", BindingFlags.Public | BindingFlags.Static);
     public static bool CedModIsPresent { get; private set; }
     public static bool IsFriendlyFireEnabledByDefault { get; set; }
     public static bool FriendlyFireAutoBanDefaultEnabled { get; set; }
@@ -17,13 +21,13 @@ public class FriendlyFireSystem
     }
     private static void initializeFFSettings()
     {
-        if (AppDomain.CurrentDomain.GetAssemblies().Any(x => x.FullName.ToLower().Contains("cedmod")))
+        if (CedModAdminDisabled != null)
         {
-            DebugLogger.LogDebug("CedMod has been detected.");
+            DebugLogger.LogDebug("CedMod обнаружен.");
             CedModIsPresent = true;
         }
         else
-            DebugLogger.LogDebug("CedMod has not been detected.");
+            DebugLogger.LogDebug("CedMod не обнаружен.");
     }
 
     public static bool FriendlyFireDetectorIsDisabled
@@ -54,22 +58,22 @@ public class FriendlyFireSystem
 
     private static bool _cedmodFFAutobanIsDisabled()
     {
-        return FriendlyFireAutoban.AdminDisabled;
+        return CedModAdminDisabled != null && (bool)CedModAdminDisabled.GetValue(null);
     }
 
     private static void _cedmodFFDisable()
     {
-        FriendlyFireAutoban.AdminDisabled = true;
+        CedModAdminDisabled?.SetValue(null, true);
     }
 
     private static void _cedmodFFEnable()
     {
-        FriendlyFireAutoban.AdminDisabled = false;
+        CedModAdminDisabled?.SetValue(null, false);
     }
 
     public static void EnableFriendlyFireDetector()
     {
-        DebugLogger.LogDebug("Enabling Friendly Fire Detector.");
+        DebugLogger.LogDebug("Включается детектор урона по союзникам.");
         try
         {
             FriendlyFireConfig.PauseDetector = false;
@@ -86,7 +90,7 @@ public class FriendlyFireSystem
     {
         try
         {
-            DebugLogger.LogDebug("Disabling Friendly Fire Detector.");
+            DebugLogger.LogDebug("Выключается детектор урона по союзникам.");
             FriendlyFireConfig.PauseDetector = true;
 
             if (CedModIsPresent)
@@ -99,21 +103,21 @@ public class FriendlyFireSystem
 
     public static void EnableFriendlyFire()
     {
-        DebugLogger.LogDebug("Enabling Friendly Fire.");
+        DebugLogger.LogDebug("Включается урон по союзникам.");
         
         Server.FriendlyFire = true;
     }
 
     public static void DisableFriendlyFire()
     {
-        DebugLogger.LogDebug("Disabling Friendly Fire.");
+        DebugLogger.LogDebug("Выключается урон по союзникам.");
 
         Server.FriendlyFire = false;
     }
 
     public static void RestoreFriendlyFire()
     {
-        DebugLogger.LogDebug("Restoring Friendly Fire and Detector.");
+        DebugLogger.LogDebug("Восстанавливаются настройки урона по союзникам и детектора.");
         Server.FriendlyFire = IsFriendlyFireEnabledByDefault;
 
         return; //03.05.2025 fix console errors

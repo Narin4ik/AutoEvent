@@ -93,11 +93,11 @@ public class EventHandler
         
         if (itemType is ItemType.None)
         {
-            DebugLogger.LogDebug("GetWeapon - Gun by level is null");
+            DebugLogger.LogDebug("GetWeapon: оружие для уровня не найдено.");
             itemType = ItemType.GunCOM15;
         }
         
-        DebugLogger.LogDebug($"Getting player {player.Nickname} weapon.");
+        DebugLogger.LogDebug($"Выдаётся оружие игроку {player.Nickname}.");
         player.EnableEffect<SpawnProtected>(.1f);
         player.Heal(500); // Since the player does not die, his hp goes into negative hp, so need to completely heal the player.
         player.ClearItems();

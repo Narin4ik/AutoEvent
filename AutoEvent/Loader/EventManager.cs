@@ -17,7 +17,7 @@ public class EventManager
         _isMerLoaded = true;
         if (!AppDomain.CurrentDomain.GetAssemblies().Any(x => x.FullName.ToLower().Contains("projectmer")))
         {
-            DebugLogger.LogDebug("ProjectMER was not detected. The mini-games may not be available until you install ProjectMER.", LogLevel.Error);
+            DebugLogger.LogDebug("ProjectMER не найден. Установите его для работы мини-игр с картами.", LogLevel.Error);
             _isMerLoaded = false;
         }
 
@@ -50,7 +50,7 @@ public class EventManager
             }
             catch (Exception ex)
             {
-                DebugLogger.LogDebug($"[EventLoader] cannot register an event.", LogLevel.Error, true);
+                DebugLogger.LogDebug("[EventLoader] Не удалось зарегистрировать ивент.", LogLevel.Error, true);
                 DebugLogger.LogDebug($"{ex}", LogLevel.Debug);
             }
         }

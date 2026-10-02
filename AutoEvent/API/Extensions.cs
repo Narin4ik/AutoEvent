@@ -113,7 +113,7 @@ public static class Extensions
             if (AutoEvent.Singleton.Config.IgnoredRoles.Contains(role))
             {
                 DebugLogger.LogDebug(
-                    "AutoEvent is trying to set a player to a role that is apart of IgnoreRoles. This is probably an error. The plugin will instead set players to the lobby role to prevent issues.",
+                    "AutoEvent пытается назначить игроку игнорируемую роль. Вместо неё назначена роль лобби.",
                     LogLevel.Error, true);
                 role = AutoEvent.Singleton.Config.LobbyRole;
             }
@@ -154,7 +154,7 @@ public static class Extensions
         
         if (!flags.HasFlag(LoadoutFlags.IgnoreStamina) && loadout.Stamina != 0)
         {
-            player.ReferenceHub.playerStats.GetModule<StaminaStat>().ModifyAmount(loadout.Stamina);
+            player.Stamina += loadout.Stamina;
         }
         else
         {
@@ -228,35 +228,30 @@ public static class Extensions
     
     public static bool IsExistsMap(string schematicName, out string response)
     {
+        var schematicsDir = ProjectMER.ProjectMER.SchematicsDir;
+        if (string.IsNullOrWhiteSpace(schematicsDir))
+        {
+            response = "ProjectMER has not initialized. Install ProjectMER 2026.7.6.1 in LabAPI/plugins/global and restart the server.";
+            return false;
+        }
+
         try
         {
-            if (MapUtils.GetSchematicDataByName(schematicName) is null)
+            if (!MapUtils.TryGetSchematicDataByName(schematicName, out _))
             {
-                // Map is not installed for ProjectMER
-                response = $"You need to download the map {schematicName} to run this mini-game.\n" +
-                           $"Download and install Schematics.tar.gz from the github.";
+                response = $"Schematic {schematicName} is missing or invalid. Install it in {schematicsDir} and check the ProjectMER log.";
                 return false;
             }
 
-            // The latest ProjectMER and Schematics are installed
-            response = $"The map {schematicName} exist and can be used.";
+            response = $"The schematic {schematicName} is available in {schematicsDir}.";
             return true;
         }
-        catch (Exception _)
+        catch (Exception e)
         {
-            // The old version of ProjectMER is installed
-            if (AppDomain.CurrentDomain.GetAssemblies().Any(x => x.FullName.ToLower().Contains("projectmer")))
-            {
-                response = $"You have installed the old version of 'ProjectMER' and cannot run this mini-game.\n" +
-                           $"Install the latest version of 'ProjectMER'.";
-                return false;
-            }
+            DebugLogger.LogDebug($"Не удалось прочитать схему ProjectMER {schematicName}: {e}", LogLevel.Error, true);
+            response = $"Could not load schematic {schematicName} from {schematicsDir}. Check the ProjectMER log.";
+            return false;
         }
-        
-        // The MER is not installed
-        response = $"You need to download the 'ProjectMER' to run this mini-game.\n" +
-                   $"Read the installation instruction in the github.";
-        return false;
     }
     
     public static MapObject LoadMap(string schematicName, Vector3 pos, Quaternion rot, Vector3 scale)
@@ -264,6 +259,8 @@ public static class Extensions
         try
         {
             var schematicObject = ObjectSpawner.SpawnSchematic(schematicName, pos, rot, scale);
+            if (schematicObject == null)
+                throw new InvalidOperationException($"ProjectMER could not spawn schematic {schematicName}.");
 
             return new MapObject()
             {
@@ -273,7 +270,7 @@ public static class Extensions
         }
         catch (Exception e)
         {
-            DebugLogger.LogDebug("An error occured at LoadMap.", LogLevel.Warn, true);
+            DebugLogger.LogDebug("Ошибка загрузки карты.", LogLevel.Warn, true);
             DebugLogger.LogDebug($"{e}");
         }
 
@@ -336,7 +333,7 @@ public static class Extensions
             DebugLogger.LogDebug($"{filePath}");
             if (!AudioClipStorage.LoadClip(filePath, fileName))
             {
-                DebugLogger.LogDebug($"[PlayAudio] The music file {fileName} was not found for playback");
+                DebugLogger.LogDebug($"[PlayAudio] Музыкальный файл {fileName} не найден.");
                 return null;
             }
         }
@@ -357,12 +354,12 @@ public static class Extensions
     {
         if (audioPlayer is null)
         {
-            DebugLogger.LogDebug($"[PlayPlayerAudio] The AudioPlayer is null");
+            DebugLogger.LogDebug("[PlayPlayerAudio] AudioPlayer не создан.");
         }
 
         if (player is null)
         {
-            DebugLogger.LogDebug($"[PlayPlayerAudio] The player is null");
+            DebugLogger.LogDebug("[PlayPlayerAudio] Игрок не найден.");
         }
         
         if (!AudioClipStorage.AudioClips.ContainsKey(fileName))
@@ -371,7 +368,7 @@ public static class Extensions
             DebugLogger.LogDebug($"{filePath}");
             if (!AudioClipStorage.LoadClip(filePath, fileName))
             {
-                DebugLogger.LogDebug($"[PlayPlayerAudio] The music file {fileName} was not found for playback");
+                DebugLogger.LogDebug($"[PlayPlayerAudio] Музыкальный файл {fileName} не найден.");
                 return;
             }
         }
@@ -383,7 +380,7 @@ public static class Extensions
     {
         if (audioPlayer is null)
         {
-            DebugLogger.LogDebug($"[PauseAudio] The AudioPlayer is null");
+            DebugLogger.LogDebug("[PauseAudio] AudioPlayer не создан.");
         }
 
         try
@@ -401,7 +398,7 @@ public static class Extensions
     {
         if (audioPlayer is null)
         {
-            DebugLogger.LogDebug($"[PauseAudio] The AudioPlayer is null");
+            DebugLogger.LogDebug("[PauseAudio] AudioPlayer не создан.");
         }
 
         try
@@ -419,7 +416,7 @@ public static class Extensions
     {
         if (audioPlayer is null)
         {
-            DebugLogger.LogDebug($"[StopAudio] The AudioPlayer is null");
+            DebugLogger.LogDebug("[StopAudio] AudioPlayer не создан.");
         }
         
         try
@@ -429,7 +426,7 @@ public static class Extensions
         }
         catch (Exception e)
         {
-            DebugLogger.LogDebug("An error occured at StopAudio.", LogLevel.Warn, true);
+            DebugLogger.LogDebug("Ошибка остановки аудио.", LogLevel.Warn, true);
             DebugLogger.LogDebug($"{e}");
         }
     }

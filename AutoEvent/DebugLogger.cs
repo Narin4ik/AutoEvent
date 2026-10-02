@@ -29,7 +29,7 @@ public class DebugLogger
             _filePath = Path.Combine(AutoEvent.BaseConfigPath, "debug-output.log");
             if (WriteDirectly)
             {
-                DebugLogger.LogDebug($"Writing debug output directly to \"{_filePath}\"");
+                DebugLogger.LogDebug($"Отладочные сообщения записываются в \"{_filePath}\"");
                 if (File.Exists(_filePath))
                 {
                     File.Delete(_filePath);
@@ -40,7 +40,7 @@ public class DebugLogger
         }
         catch (Exception e)
         {
-            DebugLogger.LogDebug($"An error has occured while trying to create a debug log.", LogLevel.Warn, true);
+            DebugLogger.LogDebug("Не удалось создать журнал отладки.", LogLevel.Warn, true);
             DebugLogger.LogDebug($"{e}");
         }
     }
@@ -49,7 +49,7 @@ public class DebugLogger
     {
         if (_loaded)
         {
-            string log = $"[{level.ToString()}] {(!outputIfNotDebug ? "[Hidden] ": "")}" + input;
+            string log = $"[{level.ToString()}] {(!outputIfNotDebug ? "[Скрыто] ": "")}" + input;
             if (!WriteDirectly)
             {
                 Singleton._debugLogs.Add(log);

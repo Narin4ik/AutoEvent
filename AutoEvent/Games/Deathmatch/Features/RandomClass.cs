@@ -10,20 +10,20 @@ namespace AutoEvent.Games.Deathmatch
         {
             if (GameMap is null)
             {
-                DebugLogger.LogDebug("Map is null");
+                DebugLogger.LogDebug("Карта не загружена.");
                 return Vector3.zero;
             }
 
             if (GameMap.AttachedBlocks is null)
             {
-                DebugLogger.LogDebug("Attached Blocks is null");
+                DebugLogger.LogDebug("Список блоков карты пуст.");
                 return Vector3.zero;
             }
 
             var spawnpoint = GameMap.AttachedBlocks.Where(x => x.name == "Spawnpoint").ToList().RandomItem();
             if (spawnpoint is null)
             {
-                DebugLogger.LogDebug("Spawnpoint is null");
+                DebugLogger.LogDebug("Точка появления не найдена.");
                 return Vector3.zero;
             }
 

@@ -55,12 +55,12 @@ public class PlatformSelector
     private void _logOutput()
     {
         DebugLogger.LogDebug(
-            $"Selecting {PlatformCount} Platforms. [{MinimumSideOffset}, {MaximumSideOffset}]   {LeftSidedPlatforms} | {RightSidedPlatforms}",
+            $"Выбрано платформ: {PlatformCount}. [{MinimumSideOffset}, {MaximumSideOffset}]   слева: {LeftSidedPlatforms} | справа: {RightSidedPlatforms}",
             LogLevel.Debug, false);
         foreach (var platform in PlatformData.OrderByDescending(x => x.Placement))
         {
             DebugLogger.LogDebug(
-                (platform.LeftSideIsDangerous ? "[X] [=]" : "[=] [X]") + $"  Priority: {platform.Placement}",
+                (platform.LeftSideIsDangerous ? "[X] [=]" : "[=] [X]") + $"  Приоритет: {platform.Placement}",
                 LogLevel.Debug, false);
         }
     }

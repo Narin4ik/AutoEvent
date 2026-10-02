@@ -1,0 +1,58 @@
+name: Build AutoEvent
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - name: Check out sources
+        uses: actions/checkout@v4
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Test voting rules
+        shell: pwsh
+        run: dotnet run --project Tests/AutoVotingRules.Tests.csproj --configuration Release
+
+      - name: Download pinned plugin dependencies
+        shell: pwsh
+        run: ./prepare-dependencies.ps1
+
+      - name: Download SCP:SL dedicated server build references
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $archive = Join-Path $env:RUNNER_TEMP 'steamcmd.zip'
+          $steam = Join-Path $env:RUNNER_TEMP 'steamcmd'
+          $server = Join-Path $env:RUNNER_TEMP 'scpsl'
+          Invoke-WebRequest 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip' -OutFile $archive
+          Expand-Archive -LiteralPath $archive -DestinationPath $steam
+          & (Join-Path $steam 'steamcmd.exe') +force_install_dir $server +login anonymous +app_update 996560 validate +quit
+          if ($LASTEXITCODE -ne 0) { throw "SteamCMD завершился с кодом $LASTEXITCODE" }
+          $managed = Join-Path $server 'SCPSL_Data/Managed'
+          if (-not (Test-Path -LiteralPath (Join-Path $managed 'LabApi.dll'))) {
+            throw "В установленном сервере не найдена LabApi.dll: $managed"
+          }
+          "SL_MANAGED=$managed" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Build plugin in Release
+        shell: pwsh
+        run: ./build-exiled.ps1 -ManagedPath $env:SL_MANAGED
+
+      - name: Upload plugin DLL
+        uses: actions/upload-artifact@v4
+        with:
+          name: AutoEvent-EXILED-9.14.2
+          path: AutoEvent/bin/Release/net48/AutoEvent.dll
+          if-no-files-found: error

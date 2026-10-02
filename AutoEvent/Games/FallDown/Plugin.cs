@@ -86,7 +86,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
         {
             if (_noPlatformsRemainingWarning)
             {
-                DebugLogger.LogDebug("No platforms remaining.");
+                DebugLogger.LogDebug("Платформ больше не осталось.");
                 _noPlatformsRemainingWarning = false;
             }
             return;

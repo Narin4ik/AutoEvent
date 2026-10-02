@@ -27,7 +27,7 @@ internal class EventHandler
         Exiled.Events.Handlers.Player.Dying += OnDying;
     }
 
-    ~EventHandler()
+    public void UnregisterEvents()
     {
         Exiled.Events.Handlers.Server.RespawningTeam -= OnRespawningTeam;
         Exiled.Events.Handlers.Server.SelectingRespawnTeam -= OnSelectingRespawnTeam;

@@ -5,7 +5,12 @@
       Newtonsoft.Json
       0Harmony
       NVorbis
+      SharpCompress
+      System.Buffers
       System.Memory
+      System.Numerics.Vectors
+      System.Runtime.CompilerServices.Unsafe
+      System.ValueTuple
     </IncludeAssemblies>
   </Costura>
 </Weavers>

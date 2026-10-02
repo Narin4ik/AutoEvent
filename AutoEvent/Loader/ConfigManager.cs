@@ -50,7 +50,7 @@ public static class ConfigManager
 
                 if (!configs.TryGetValue(ev.Name, out object rawDeserializedConfig))
                 {
-                    DebugLogger.LogDebug($"[ConfigManager] {ev.Name} doesn't have configs");
+                    DebugLogger.LogDebug($"[ConfigManager] Для {ev.Name} нет конфигурации.");
                     continue;
                 }
 
@@ -58,11 +58,11 @@ public static class ConfigManager
                 ev.InternalConfig.CopyProperties(translation);
             }
 
-            DebugLogger.LogDebug($"[ConfigManager] The configs of the mini-games are loaded.");
+            DebugLogger.LogDebug("[ConfigManager] Конфигурации мини-игр загружены.");
         }
         catch (Exception ex)
         {
-            DebugLogger.LogDebug($"[ConfigManager] cannot read from the config.", LogLevel.Error, true);
+            DebugLogger.LogDebug("[ConfigManager] Не удалось прочитать конфигурацию.", LogLevel.Error, true);
             DebugLogger.LogDebug($"{ex}", LogLevel.Debug);
         }
     }
@@ -87,9 +87,9 @@ public static class ConfigManager
                 }
                 catch (WebException ex)
                 {
-                    DebugLogger.LogDebug(input:"Couldn't verify the server country. Providing default translation.");
+                    DebugLogger.LogDebug(input:"Не удалось определить страну сервера; используется перевод по умолчанию.");
                 }
-                DebugLogger.LogDebug($"[ConfigManager] The translation.yml file was not found. Creating a new translation for {countryCode} language...");
+                DebugLogger.LogDebug($"[ConfigManager] Файл translation.yml не найден. Создаётся перевод для языка {countryCode}...");
                 translations = LoadTranslationFromAssembly(countryCode);
             }
             // Otherwise, check language of the translation with the language of the config.
@@ -106,7 +106,7 @@ public static class ConfigManager
 
                 if (!translations.TryGetValue(ev.Name, out object rawDeserializedTranslation))
                 {
-                    DebugLogger.LogDebug($"[ConfigManager] {ev.Name} doesn't have translations");
+                    DebugLogger.LogDebug($"[ConfigManager] Для {ev.Name} нет перевода.");
                     continue;
                 }
 
@@ -114,7 +114,7 @@ public static class ConfigManager
                     ev.InternalTranslation.GetType());
                 if (obj is not EventTranslation translation)
                 {
-                    DebugLogger.LogDebug($"[ConfigManager] {ev.Name} malformed translation.");
+                    DebugLogger.LogDebug($"[ConfigManager] Перевод {ev.Name} имеет неверный формат.");
                     continue;
                 }
 
@@ -125,11 +125,11 @@ public static class ConfigManager
                 ev.CommandName = translation.CommandName;
             }
 
-            DebugLogger.LogDebug($"[ConfigManager] The translations of the mini-games are loaded.");
+            DebugLogger.LogDebug("[ConfigManager] Переводы мини-игр загружены.");
         }
         catch (Exception ex)
         {
-            DebugLogger.LogDebug($"[ConfigManager] Cannot read from the translation.", LogLevel.Error, true);
+            DebugLogger.LogDebug("[ConfigManager] Не удалось прочитать перевод.", LogLevel.Error, true);
             DebugLogger.LogDebug($"{ex}", LogLevel.Debug);
         }
     }
@@ -183,7 +183,7 @@ public static class ConfigManager
             {
                 if (stream == null)
                 {
-                    DebugLogger.LogDebug($"[ConfigManager] The language '{language}' was not found in the assembly.", LogLevel.Error);
+                    DebugLogger.LogDebug($"[ConfigManager] Язык '{language}' не найден в сборке.", LogLevel.Error);
                     translationFile = default;
                     return false;
                 }
@@ -201,7 +201,7 @@ public static class ConfigManager
         }
         catch (Exception ex)
         {
-            DebugLogger.LogDebug($"[ConfigManager] The language '{language}' cannot load from the assembly.", LogLevel.Error, true);
+            DebugLogger.LogDebug($"[ConfigManager] Не удалось загрузить язык '{language}' из сборки.", LogLevel.Error, true);
             DebugLogger.LogDebug($"{ex}", LogLevel.Debug);
         }
 

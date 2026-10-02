@@ -46,7 +46,7 @@ public class Volume : ICommand, IUsageProvider
         catch (Exception e)
         {
             response = $"Could not set the volume due to an error. This could be a bug. Ensure audio is playing while using this command.";
-            Log.Warn($"An error has occured while trying to set the volume.");
+            Log.Warn("Не удалось изменить громкость.");
             Log.Debug($"{e}");
             return false;
         }

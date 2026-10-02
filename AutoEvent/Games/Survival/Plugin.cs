@@ -76,7 +76,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
         List<Player> players = Config.Zombies.GetPlayers(true);
         foreach (Player player in players)
         {
-            DebugLogger.LogDebug($"Making player {player.Nickname} a zombie.");
+            DebugLogger.LogDebug($"Игрок {player.Nickname} становится зомби.");
             player.GiveLoadout(Config.ZombieLoadouts);
             Extensions.PlayPlayerAudio(SoundInfo.AudioPlayer, player, Config.ZombieScreams.RandomItem(), 15);
             

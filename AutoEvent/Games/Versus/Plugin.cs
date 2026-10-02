@@ -60,7 +60,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 
         if (Config.Team1Loadouts == Config.Team2Loadouts)
         {
-            DebugLogger.LogDebug("Warning: Teams should not have the same roles.", LogLevel.Warn, true);
+            DebugLogger.LogDebug("У команд не должны совпадать роли.", LogLevel.Warn, true);
         }
 
         List<GameObject> spawnpoints = new();
