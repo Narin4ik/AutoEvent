@@ -32,7 +32,10 @@ function Get-ReleaseAsset([string] $repository, [string] $tag, [string] $extensi
                 $matches = @(Get-ChildItem -LiteralPath $unpacked -Filter $dllName -File -Recurse)
                 if ($matches.Count -ne 1) { throw "В архиве $($assets[0].name) ожидался один $dllName, найдено $($matches.Count)." }
                 New-Item -ItemType Directory -Path (Split-Path -Parent $destination) -Force | Out-Null
-                Copy-Item -LiteralPath $matches[0].FullName -Destination $destination -Force
+                # Costura also needs SharpCompress and the other sibling assemblies.
+                Get-ChildItem -LiteralPath $matches[0].DirectoryName -Filter '*.dll' -File | ForEach-Object {
+                    Copy-Item -LiteralPath $_.FullName -Destination (Split-Path -Parent $destination) -Force
+                }
             }
             finally { if (Test-Path -LiteralPath $unpacked) { Remove-Item -LiteralPath $unpacked -Recurse -Force } }
         }
