@@ -38,8 +38,13 @@ jobs:
           $server = Join-Path $env:RUNNER_TEMP 'scpsl'
           Invoke-WebRequest 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip' -OutFile $archive
           Expand-Archive -LiteralPath $archive -DestinationPath $steam
-          & (Join-Path $steam 'steamcmd.exe') +force_install_dir $server +login anonymous +app_update 996560 validate +quit
-          if ($LASTEXITCODE -ne 0) { throw "SteamCMD завершился с кодом $LASTEXITCODE" }
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
+            & (Join-Path $steam 'steamcmd.exe') +force_install_dir $server +login anonymous +app_update 996560 validate +quit
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($LASTEXITCODE -ne 7 -or $attempt -eq 3) { throw "SteamCMD завершился с кодом $LASTEXITCODE (попытка $attempt)" }
+            Write-Host 'SteamCMD обновился и перезапускается; повторяем установку сервера.'
+            Start-Sleep -Seconds 5
+          }
           $managed = Join-Path $server 'SCPSL_Data/Managed'
           if (-not (Test-Path -LiteralPath (Join-Path $managed 'LabApi.dll'))) {
             throw "В установленном сервере не найдена LabApi.dll: $managed"
