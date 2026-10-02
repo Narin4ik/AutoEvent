@@ -3,8 +3,7 @@ This checkout is an independent EXILED 9.14.2 compatibility port of the archived
 
 The port includes configurable voting for automatic events every fourth round. See [automatic events](Docs/Installation.md#автоматические-ивенты) for Server Specific Settings buttons, RA commands, and configuration.
 
-This repository is deprecated. Please follow this link to the actively maintained fork by MedveMarci:
-https://github.com/MedveMarci/AutoEvent
+The [original RisottoMan repository](https://github.com/RisottoMan/AutoEvent) is archived. This fork contains the EXILED compatibility port and automatic event voting described above. The separate [MedveMarci fork](https://github.com/MedveMarci/AutoEvent) is another maintained branch of AutoEvent.
 
 ![Logo](https://github.com/RisottoMan/AutoEvent/blob/beta14.1-mer/Photos/MGMER.png)
 
